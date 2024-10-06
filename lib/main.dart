@@ -162,7 +162,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 }).toList(),
                 onChanged: (String? newValue) {
                   setState(() {
-                    selectedPriority = newValue!;
+                    selectedPriority = newValue!; // Update selected priority
                   });
                 },
               ),
