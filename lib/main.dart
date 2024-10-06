@@ -30,7 +30,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
   @override
   Widget build(BuildContext context) {
     // Sort tasks based on priority before displaying
-    tasks.sort((a, b) => a.priority.compareTo(b.priority));
+    tasks.sort((a, b) => b.priorityValue.compareTo(a.priorityValue)); // Sort descending
 
     return Scaffold(
       appBar: AppBar(
@@ -81,6 +81,10 @@ class _TaskListScreenState extends State<TaskListScreen> {
   }
 
   void _showAddTaskDialog(BuildContext context) {
+    // Reset controller and priority for a new task
+    taskController.clear();
+    selectedPriority = 'Low'; // Reset to default
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -122,7 +126,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
               onPressed: () {
                 _addTask(taskController.text, selectedPriority);
                 taskController.clear();
-                selectedPriority = 'Low'; // Reset to default
                 Navigator.of(context).pop();
               },
             ),
@@ -177,7 +180,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
               onPressed: () {
                 _editTask(index, taskController.text, selectedPriority);
                 taskController.clear();
-                selectedPriority = 'Low'; // Reset to default
                 Navigator.of(context).pop();
               },
             ),
