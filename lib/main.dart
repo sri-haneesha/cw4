@@ -90,29 +90,33 @@ class _TaskListScreenState extends State<TaskListScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Add Task'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: taskController,
-                decoration: InputDecoration(hintText: 'Enter task'),
-              ),
-              DropdownButton<String>(
-                value: selectedPriority,
-                items: <String>['Low', 'Medium', 'High']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedPriority = newValue!;
-                  });
-                },
-              ),
-            ],
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: taskController,
+                    decoration: InputDecoration(hintText: 'Enter task'),
+                  ),
+                  DropdownButton<String>(
+                    value: selectedPriority,
+                    items: <String>['Low', 'Medium', 'High']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedPriority = newValue!;
+                      });
+                    },
+                  ),
+                ],
+              );
+            },
           ),
           actions: <Widget>[
             TextButton(
@@ -144,29 +148,33 @@ class _TaskListScreenState extends State<TaskListScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Edit Task'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: taskController,
-                decoration: InputDecoration(hintText: 'Enter new task name'),
-              ),
-              DropdownButton<String>(
-                value: selectedPriority,
-                items: <String>['Low', 'Medium', 'High']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedPriority = newValue!; // Update selected priority
-                  });
-                },
-              ),
-            ],
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: taskController,
+                    decoration: InputDecoration(hintText: 'Enter new task name'),
+                  ),
+                  DropdownButton<String>(
+                    value: selectedPriority,
+                    items: <String>['Low', 'Medium', 'High']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedPriority = newValue!; // Update selected priority
+                      });
+                    },
+                  ),
+                ],
+              );
+            },
           ),
           actions: <Widget>[
             TextButton(
