@@ -25,9 +25,13 @@ class TaskListScreen extends StatefulWidget {
 class _TaskListScreenState extends State<TaskListScreen> {
   List<Task> tasks = [];
   TextEditingController taskController = TextEditingController();
+  String selectedPriority = 'Low';
 
   @override
   Widget build(BuildContext context) {
+    // Sort tasks based on priority before displaying
+    tasks.sort((a, b) => a.priority.compareTo(b.priority));
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Task Manager'),
@@ -37,6 +41,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(tasks[index].taskName),
+            subtitle: Text('Priority: ${tasks[index].priority}'),
             leading: Checkbox(
               value: tasks[index].isCompleted,
               onChanged: (value) {
@@ -81,9 +86,29 @@ class _TaskListScreenState extends State<TaskListScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Add Task'),
-          content: TextField(
-            controller: taskController,
-            decoration: InputDecoration(hintText: 'Enter task'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: taskController,
+                decoration: InputDecoration(hintText: 'Enter task'),
+              ),
+              DropdownButton<String>(
+                value: selectedPriority,
+                items: <String>['Low', 'Medium', 'High']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedPriority = newValue!;
+                  });
+                },
+              ),
+            ],
           ),
           actions: <Widget>[
             TextButton(
@@ -95,8 +120,9 @@ class _TaskListScreenState extends State<TaskListScreen> {
             TextButton(
               child: Text('ADD'),
               onPressed: () {
-                _addTask(taskController.text);
+                _addTask(taskController.text, selectedPriority);
                 taskController.clear();
+                selectedPriority = 'Low'; // Reset to default
                 Navigator.of(context).pop();
               },
             ),
@@ -108,14 +134,36 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   void _showEditTaskDialog(BuildContext context, int index) {
     taskController.text = tasks[index].taskName;
+    selectedPriority = tasks[index].priority; // Set selected priority
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Edit Task'),
-          content: TextField(
-            controller: taskController,
-            decoration: InputDecoration(hintText: 'Enter new task name'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: taskController,
+                decoration: InputDecoration(hintText: 'Enter new task name'),
+              ),
+              DropdownButton<String>(
+                value: selectedPriority,
+                items: <String>['Low', 'Medium', 'High']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedPriority = newValue!;
+                  });
+                },
+              ),
+            ],
           ),
           actions: <Widget>[
             TextButton(
@@ -127,8 +175,9 @@ class _TaskListScreenState extends State<TaskListScreen> {
             TextButton(
               child: Text('SAVE'),
               onPressed: () {
-                _editTask(index, taskController.text);
+                _editTask(index, taskController.text, selectedPriority);
                 taskController.clear();
+                selectedPriority = 'Low'; // Reset to default
                 Navigator.of(context).pop();
               },
             ),
@@ -138,15 +187,16 @@ class _TaskListScreenState extends State<TaskListScreen> {
     );
   }
 
-  void _addTask(String taskName) {
+  void _addTask(String taskName, String priority) {
     setState(() {
-      tasks.add(Task(taskName: taskName));
+      tasks.add(Task(taskName: taskName, priority: priority));
     });
   }
 
-  void _editTask(int index, String newTaskName) {
+  void _editTask(int index, String newTaskName, String newPriority) {
     setState(() {
       tasks[index].taskName = newTaskName;
+      tasks[index].priority = newPriority;
     });
   }
 
@@ -160,6 +210,20 @@ class _TaskListScreenState extends State<TaskListScreen> {
 class Task {
   String taskName;
   bool isCompleted;
+  String priority; // Add priority field
 
-  Task({required this.taskName, this.isCompleted = false});
+  Task({required this.taskName, this.isCompleted = false, this.priority = 'Low'});
+
+  // Method to convert priority to an integer for sorting
+  int get priorityValue {
+    switch (priority) {
+      case 'High':
+        return 3;
+      case 'Medium':
+        return 2;
+      case 'Low':
+      default:
+        return 1;
+    }
+  }
 }
